@@ -725,8 +725,14 @@ function closeCallPopup(e) {
 
 const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbw5WT9jrmTn3Sr4U43CqNZh1WbeYVsuuFKRlY3tR5EB1EST4620L2QgqdLz_S42eFC0cg/exec";
 
-document.getElementById('lead-form').addEventListener('submit', async (e) => {
+let conversionSent = false;
+let submitting = false;
+
+async function handleSubmit(e) {
   e.preventDefault();
+
+  if (submitting) return;
+  submitting = true;
 
   const nameEl  = document.getElementById('f_name');
   const emailEl = document.getElementById('f_email');
@@ -738,7 +744,7 @@ document.getElementById('lead-form').addEventListener('submit', async (e) => {
     else { err.style.display = 'none'; }
   });
 
-  if (!valid) return;
+  if (!valid) { submitting = false; return; }
 
   const btn = document.getElementById('form-btn');
   btn.textContent = 'Sending…'; btn.disabled = true;
@@ -755,14 +761,25 @@ document.getElementById('lead-form').addEventListener('submit', async (e) => {
   try {
     const params = new URLSearchParams(payload);
     await fetch(WEBHOOK_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' });
-    gtag('event', 'conversion', { 'send_to': 'AW-17529511266/T7DPCNTn5rkcEOK63KZB' });
+
+    if (!conversionSent) {
+      conversionSent = true;
+      gtag('event', 'conversion', { 'send_to': 'AW-17529511266/T7DPCNTn5rkcEOK63KZB' });
+    }
+
     document.getElementById('lead-form').style.display = 'none';
     document.getElementById('form-success').style.display = 'block';
   } catch (err) {
-    btn.textContent = 'Request a Free Consultation →'; btn.disabled = false;
+    btn.textContent = 'Request a Consultation →'; btn.disabled = false;
+    submitting = false;
     alert('There was an error submitting the form. Please try again.');
   }
-});
+}
+
+if (!window.__leadFormInitialized) {
+  window.__leadFormInitialized = true;
+  document.getElementById('lead-form').addEventListener('submit', handleSubmit);
+}
 </script>
 
 </body>
