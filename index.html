@@ -722,6 +722,20 @@ function closeCallPopup(e) {
   }
 }
 
+// Event snippet for Contact us form conversion
+function gtag_report_conversion(url) {
+  var callback = function () {
+    if (typeof(url) != 'undefined') {
+      window.location = url;
+    }
+  };
+  gtag('event', 'conversion', {
+      'send_to': 'AW-17529511266/T7DPCNTn5rkcEOK63KZB',
+      'event_callback': callback
+  });
+  return false;
+}
+
 const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbw5WT9jrmTn3Sr4U43CqNZh1WbeYVsuuFKRlY3tR5EB1EST4620L2QgqdLz_S42eFC0cg/exec";
 
 document.getElementById('lead-form').addEventListener('submit', async (e) => {
@@ -754,6 +768,7 @@ document.getElementById('lead-form').addEventListener('submit', async (e) => {
   try {
     const params = new URLSearchParams(payload);
     await fetch(WEBHOOK_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' });
+    gtag_report_conversion();
     document.getElementById('lead-form').style.display = 'none';
     document.getElementById('form-success').style.display = 'block';
   } catch (err) {
