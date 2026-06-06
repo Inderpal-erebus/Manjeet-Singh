@@ -762,11 +762,6 @@ async function handleSubmit(e) {
     const params = new URLSearchParams(payload);
     await fetch(WEBHOOK_URL + '?' + params.toString(), { method: 'GET', mode: 'no-cors' });
 
-    if (!conversionSent) {
-      conversionSent = true;
-      gtag('event', 'conversion', { 'send_to': 'AW-17529511266/T7DPCNTn5rkcEOK63KZB' });
-    }
-
     document.getElementById('lead-form').style.display = 'none';
     document.getElementById('form-success').style.display = 'block';
   } catch (err) {
